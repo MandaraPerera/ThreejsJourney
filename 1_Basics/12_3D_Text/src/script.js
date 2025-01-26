@@ -33,8 +33,16 @@ const fontLoader = new FontLoader()
 fontLoader.load(
     '/fonts/red_hat_display.typeface.json',
     (font) => {
-        const textGeometry = new TextGeometry(
-            'Mandara',
+        const vars = {
+            text: 'Mandara'
+        }
+        gui.add(vars, 'text').onFinishChange((newText) => {
+            vars.text = newText
+            updateText()
+        })
+
+        let textGeometry = new TextGeometry(
+            vars.text,
             {
                 font: font,
                 size: 0.5,
@@ -48,21 +56,41 @@ fontLoader.load(
                 bevelSegments: 4
             }
         )
-        // textGeometry.computeBoundingBox()
-        // textGeometry.translate(
-        //     - (textGeometry.boundingBox.max.x - 0.02) * 0.5,
-        //     - (textGeometry.boundingBox.max.y - 0.02) * 0.5,
-        //     - (textGeometry.boundingBox.max.z - 0.03) * 0.5
-        // )
-
         textGeometry.center()
 
         const material = new THREE.MeshMatcapMaterial({matcap: matcapTexture})
-        const text = new THREE.Mesh(textGeometry, material)
+
+        let text = new THREE.Mesh(textGeometry, material)
         scene.add(text)
 
+        function updateText() {
+            console.time('updateText')
+            text.geometry.dispose()
+            scene.remove(text)
 
-        const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45)
+            textGeometry = new TextGeometry(
+                vars.text,
+                {
+                    font: font,
+                    size: 0.5,
+                    depth: 0.2,
+
+                    curveSegments: 6,
+                    bevelEnabled: true,
+                    bevelThickness: 0.03,
+                    bevelSize: 0.02,
+                    bevelOffset: 0,
+                    bevelSegments: 4
+                }
+            )
+            textGeometry.center()
+
+            text = new THREE.Mesh(textGeometry, material)
+            scene.add(text)
+            console.timeEnd('updateText')
+        }
+
+        const donutGeometry = new THREE.TorusGeometry(0.3, 0.15, 20, 45)
 
         for (let i = 0; i < 300; i++) {
             const donut = new THREE.Mesh(donutGeometry, material)
@@ -77,7 +105,9 @@ fontLoader.load(
             const scale = Math.random() * (1 - 0.1) + 0.1
             donut.scale.set(scale, scale, scale)
 
-            scene.add(donut)
+            if (donut.position.distanceTo(text.position) > 1.5) {
+                scene.add(donut)
+            }
         }
     }
 )
