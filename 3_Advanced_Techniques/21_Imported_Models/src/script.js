@@ -21,28 +21,13 @@ const scene = new THREE.Scene()
 const textureLoader = new THREE.TextureLoader()
 
 // Floor
-const floorAlphaTexture = textureLoader.load('/floor/floorAlpha.webp')
-const floorColorTexture = textureLoader.load('/floor/forest_leaves_02_1k/forest_leaves_02_diffuse_1k.webp')
-const floorARMTexture = textureLoader.load('/floor/forest_leaves_02_1k/forest_leaves_02_arm_1k.webp')
-const floorNormalTexture = textureLoader.load('/floor/forest_leaves_02_1k/forest_leaves_02_nor_gl_1k.webp')
-const floorDisplacementTexture = textureLoader.load('/floor/forest_leaves_02_1k/forest_leaves_02_disp_1k.webp')
+const gradientTexture = textureLoader.load('/floor/3.jpg')
+gradientTexture.magFilter = THREE.NearestFilter
 
-floorColorTexture.colorSpace = THREE.SRGBColorSpace
-
-floorColorTexture.repeat.set(3, 12)
-floorARMTexture.repeat.set(3, 12)
-floorNormalTexture.repeat.set(3, 12)
-floorDisplacementTexture.repeat.set(3, 12)
-
-floorColorTexture.wrapS = THREE.RepeatWrapping
-floorARMTexture.wrapS = THREE.RepeatWrapping
-floorNormalTexture.wrapS = THREE.RepeatWrapping
-floorDisplacementTexture.wrapS = THREE.RepeatWrapping
-
-floorColorTexture.wrapT = THREE.RepeatWrapping
-floorARMTexture.wrapT = THREE.RepeatWrapping
-floorNormalTexture.wrapT = THREE.RepeatWrapping
-floorDisplacementTexture.wrapT = THREE.RepeatWrapping
+const displacementTexture = textureLoader.load('/floor/gray_rocks_1k/gray_rocks_disp_1k.jpg')
+displacementTexture.repeat.set(2, 8)
+displacementTexture.wrapS = THREE.RepeatWrapping
+displacementTexture.wrapT = THREE.RepeatWrapping
 
 /**
  * Models
@@ -59,17 +44,11 @@ const animations = {};
 gltfLoader.load(
     '/models/Fox/glTF/Fox.gltf',
     (gltf) => {
-        // const children = [...gltf.scene.children]
-        // for (const child of children) {
-        //     scene.add(child)
-        // }
-
         mixer = new THREE.AnimationMixer(gltf.scene)
 
         gltf.animations.forEach((clip) => {
             animations[clip.name] = mixer.clipAction(clip);
         });
-
         playAnimation('Walk');
 
         gltf.scene.scale.set(0.025, 0.025, 0.025)
@@ -88,7 +67,6 @@ gltfLoader.load(
 function playAnimation(name) {
     if (animations[name]) {
         Object.values(animations).forEach((action) => action.stop());
-
         animations[name].reset().play();
     }
 }
@@ -97,19 +75,13 @@ function playAnimation(name) {
  * Floor
  */
 const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(25, 100, 100, 100),
+    new THREE.PlaneGeometry(25, 100, 100, 400),
     new THREE.MeshStandardMaterial({
-        color: '#888888',
-        transparent: true,
-        alphaMap: floorAlphaTexture,
-        map: floorColorTexture,
-        aoMap: floorARMTexture,
-        roughnessMap: floorARMTexture,
-        metalnessMap: floorARMTexture,
-        normalMap: floorNormalTexture,
-        displacementMap: floorDisplacementTexture,
-        displacementScale: 0.3,
-        displacementBias: -0.15
+        color: '#5d7141',
+        displacementMap: displacementTexture,
+        displacementScale: 0.7,
+        displacementBias: -0.2,
+        flatShading: true
     })
 )
 floor.receiveShadow = true
@@ -130,8 +102,9 @@ directionalLight.shadow.camera.left = -4
 directionalLight.shadow.camera.top = 4
 directionalLight.shadow.camera.right = 4
 directionalLight.shadow.camera.bottom = -4
-directionalLight.position.set(-10, 5, -10)
+directionalLight.position.set(-10, 8, -10)
 scene.add(directionalLight)
+
 
 /**
  * Sizes
