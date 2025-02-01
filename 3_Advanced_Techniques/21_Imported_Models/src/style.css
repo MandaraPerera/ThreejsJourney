@@ -17,3 +17,15 @@ body
     left: 0;
     outline: none;
 }
+
+a {
+    position: fixed;
+    right: 50%;
+    bottom: 5px;
+    transform: translate(50%);
+    z-index: 10;
+    font-family: "Red Hat Display", serif;
+    font-weight: 600;
+    color: #ffffff;
+    opacity: 20%;
+}
