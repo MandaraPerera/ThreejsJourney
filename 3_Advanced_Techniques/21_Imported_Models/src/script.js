@@ -24,7 +24,9 @@ const textureLoader = new THREE.TextureLoader()
 const gradientTexture = textureLoader.load('/floor/3.jpg')
 gradientTexture.magFilter = THREE.NearestFilter
 
-const displacementTexture = textureLoader.load('/floor/gray_rocks_1k/gray_rocks_disp_1k.jpg')
+const alphaTexture = textureLoader.load('/floor/floorAlpha.webp')
+
+const displacementTexture = textureLoader.load('/floor/gray_rocks_1k/gray_rocks_disp_1k.webp')
 displacementTexture.repeat.set(2, 8)
 displacementTexture.wrapS = THREE.RepeatWrapping
 displacementTexture.wrapT = THREE.RepeatWrapping
@@ -78,6 +80,8 @@ const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(25, 100, 100, 400),
     new THREE.MeshStandardMaterial({
         color: '#5d7141',
+        transparent: true,
+        alphaMap: alphaTexture,
         displacementMap: displacementTexture,
         displacementScale: 0.7,
         displacementBias: -0.2,
