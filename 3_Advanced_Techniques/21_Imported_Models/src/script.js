@@ -21,9 +21,6 @@ const scene = new THREE.Scene()
 const textureLoader = new THREE.TextureLoader()
 
 // Floor
-const gradientTexture = textureLoader.load('/floor/3.jpg')
-gradientTexture.magFilter = THREE.NearestFilter
-
 const alphaTexture = textureLoader.load('/floor/floorAlpha.webp')
 
 const displacementTexture = textureLoader.load('/floor/gray_rocks_1k/gray_rocks_disp_1k.webp')
